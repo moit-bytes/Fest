@@ -37,23 +37,20 @@ const AboutEterniaLogo = () => {
             {/* Description paragraphs */}
             <div className="space-y-4 text-gray-200 leading-relaxed">
               <p className="text-lg">
-                The logo of ETERNIA, our masquerade-themed fest, embodies the essence of mystery, 
-                elegance, and celebration. The intricate design of the mask represents the allure 
-                and enigma of a masquerade, with its vibrant blue and orange hues symbolizing 
-                energy and festivity.
+             The logo of ETERNIA 2025, themed “NEXUS,” beautifully captures the spirit of connection and harmony across realms. The design unites elements of land and sea, tradition and modernity — a celebration of how diverse worlds can merge into one vibrant whole.
+
               </p>
               
               <p className="text-lg">
-                The eyes within the mask add an element of intrigue, reflecting the hidden identities 
-                and playful spirit of a masquerade ball. The dynamic flame-like patterns radiating 
-                above the mask evoke a sense of movement and liveliness, perfectly capturing the 
-                celebratory atmosphere of the fest.
+               
+The flowing waves and mermaid symbolize depth, freedom, and the endless rhythm of creativity, while the turtle embodies endurance and wisdom — timeless values that ground every festivity. On the other side, the torii gate and cherry blossoms reflect cultural elegance, renewal, and the serenity of tradition meeting imagination.
+
               </p>
               
               <p className="text-lg">
-                The combination of bold colors, ornate details, and artistic symmetry makes this logo 
-                a striking representation of ETERNIA, setting the tone for a memorable and 
-                enchanting event that celebrates the rich traditions of masquerade culture.
+             The interplay of aqua blue and crimson red represents the perfect balance between calm and energy, mirroring ETERNIA’s essence — where every idea, performance, and emotion connects seamlessly.
+             Together, these elements form the NEXUS — a radiant intersection of art, culture, and celebration, where every wave of joy and every spark of creativity flows into one eternal rhythm.
+
               </p>
             </div>
 

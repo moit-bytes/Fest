@@ -104,6 +104,7 @@ const RegisterPage = () => {
 
     setIsProcessing(true);
 
+
     try {
       const { data } = await axios.post("/payment/pay", {
         name: formData.name,

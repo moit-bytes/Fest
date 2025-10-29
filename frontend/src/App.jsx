@@ -34,7 +34,7 @@ export default function App() {
                     <AboutEterniaLogo />
                     <EventHighlights />
                     <Cards />
-                    <RegisterPage />
+                    {/* <RegisterPage /> */}
                   </>
                 }
               />
