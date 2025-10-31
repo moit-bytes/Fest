@@ -5,11 +5,18 @@ const Footer = () => {
     <footer className="border-t border-solid border-t-[var(--secondary-color)]">
       <div className="container mx-auto px-10 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
-          {/* Organizer text */}
-          <p className="text-[var(--text-secondary)] text-sm">
-            Organized by AIIMS Guwahati
+        <div>
+             <p className="text-[var(--text-secondary)] text-sm">
+           Organised by all India Institute Of Medical Sciences (AIIMS) Guwahati
           </p>
-
+          <br></br>
+              <p className="text-[var(--text-secondary)] text-sm">
+           Address - AIIMS Guwahati, Silbharal, Changsari District - Kamrup, Pincode-781101, Assam
+          </p>
+        </div>
+          {/* Organizer text */}
+       
+         
           {/* Social icons */}
           <div className="flex justify-center gap-4">
             {/* <a
@@ -83,18 +90,24 @@ const Footer = () => {
             >
               Contact Us - +917429775590 
             </a>
-            {/* <a
+            <a
               className="text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors"
-              href="#"
+              href="/terms"
+            >
+              TERMS & CONDITIONS
+            </a>
+            <a
+              className="text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors"
+              href="/privacypolicy"
             >
               Privacy Policy
-            </a> */}
-            {/* <a
+            </a>
+            <a
               className="text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors"
-              href="#"
+              href="/refundpolicy"
             >
-              Terms of Service
-            </a> */}
+              Refund Policy
+            </a>
           </div>
         </div>
       </div>
