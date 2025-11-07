@@ -20,7 +20,7 @@ const RegisterPage = () => {
   const [paymentFailed, setPaymentFailed] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const paymentUrl = `/expire?uniqueId=${uniqueId}`;
+  const paymentUrl = `https://aiimsguwahatieternia2025.com/expire?uniqueId=${uniqueId}`;
 
   // ✅ Check PayU redirect result
   useEffect(() => {
