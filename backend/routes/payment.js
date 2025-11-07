@@ -333,21 +333,62 @@ router.post("/sportspay", async (req, res) => {
       );
   }
 });
+// async function sendPaymentEmail(toEmail, uniqueId) {
+//   try {
+//     if (!uniqueId) throw new Error("Unique ID is missing");
+
+//     // ✅ Create the URL to encode in QR
+//     const qrUrl = `https://aiimsguwahatieternia2025.com/expire?uniqueId=${uniqueId}`;
+
+//     // 1️⃣ Generate QR code as a Data URL
+//     const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
+//       errorCorrectionLevel: "H",
+//       type: "image/png",
+//       width: 300,
+//     });
+
+//     // 2️⃣ Configure nodemailer transporter
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
+
+//     // 3️⃣ Compose email
+//     const mailOptions = {
+//       from: `"Event Team" <${process.env.EMAIL_USER}>`,
+//       to: toEmail,
+//       subject: "Payment Successful - Your Unique ID",
+//       html: `
+//         <h3>Payment Successful!</h3>
+//         <p>Your Unique ID is: <strong>${uniqueId}</strong></p>
+//         <p>Scan this QR code to access your payment details:</p>
+//         <img src="${qrCodeDataUrl}" alt="QR Code" />
+//       `,
+//     };
+
+//     // 4️⃣ Send the email
+//     const info = await transporter.sendMail(mailOptions);
+//     console.log("Email sent: " + info.response);
+//   } catch (err) {
+//     console.error("Error sending payment email:", err);
+//   }
+// }
 async function sendPaymentEmail(toEmail, uniqueId) {
   try {
     if (!uniqueId) throw new Error("Unique ID is missing");
 
-    // ✅ Create the URL to encode in QR
     const qrUrl = `https://aiimsguwahatieternia2025.com/expire?uniqueId=${uniqueId}`;
 
-    // 1️⃣ Generate QR code as a Data URL
-    const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
+    // Generate QR code as a buffer
+    const qrCodeBuffer = await QRCode.toBuffer(qrUrl, {
       errorCorrectionLevel: "H",
       type: "image/png",
       width: 300,
     });
 
-    // 2️⃣ Configure nodemailer transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -356,7 +397,6 @@ async function sendPaymentEmail(toEmail, uniqueId) {
       },
     });
 
-    // 3️⃣ Compose email
     const mailOptions = {
       from: `"Event Team" <${process.env.EMAIL_USER}>`,
       to: toEmail,
@@ -364,12 +404,17 @@ async function sendPaymentEmail(toEmail, uniqueId) {
       html: `
         <h3>Payment Successful!</h3>
         <p>Your Unique ID is: <strong>${uniqueId}</strong></p>
-        <p>Scan this QR code to access your payment details:</p>
-        <img src="${qrCodeDataUrl}" alt="QR Code" />
+        <p>Scan the attached QR code to access your payment details.</p>
       `,
+      attachments: [
+        {
+          filename: "qr-code.png",
+          content: qrCodeBuffer,
+          cid: "qrcode", // Content ID for embedding
+        },
+      ],
     };
 
-    // 4️⃣ Send the email
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent: " + info.response);
   } catch (err) {
