@@ -1,6 +1,60 @@
-.videobackground{
-    background: transparent;
+.videobackground {
+  background: transparent;
 }
-.video-section{
-    border-radius: 3rem;
+.video-section {
+  border-radius: 3rem;
+}
+.typing-title {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid rgba(255, 255, 255, 0.8); /* Cursor */
+  width: 0;
+  animation: typing 4s steps(8) infinite, blink 0.8s infinite;
+}
+
+/* Typing + Reset Loop (Default: 12ch for larger screens) */
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  60% {
+    width: 12ch;
+  }
+  85% {
+    width: 12ch;
+  }
+  100% {
+    width: 0;
+  }
+}
+
+/* Override for screens below 600px (8ch) */
+@media (max-width: 600px) {
+  @keyframes typing {
+    0% {
+      width: 0;
+    }
+    60% {
+      width: 8ch;
+    }
+    85% {
+      width: 8ch;
+    }
+    100% {
+      width: 0;
+    }
+  }
+}
+
+/* Cursor Blink */
+@keyframes blink {
+  0%,
+  50% {
+    border-color: transparent;
+  }
+  50%,
+  100% {
+    border-color: rgba(255, 255, 255, 0.8);
+  }
 }

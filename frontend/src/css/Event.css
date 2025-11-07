@@ -1,9 +1,52 @@
-  @media (min-width: 1024px) {
-          .scrollbar-hide-lg::-webkit-scrollbar {
-            display: none;
-          }
-          .scrollbar-hide-lg {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-          }
-        }
+@media (min-width: 1024px) {
+  .scrollbar-hide-lg::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide-lg {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.7s ease forwards;
+}
+.fade-left {
+  animation: fadeLeft 0.7s ease forwards;
+}
+.fade-right {
+  animation: fadeRight 0.7s ease forwards;
+}

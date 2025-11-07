@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../css/Navbar.css"; // external CSS for link styles
+import { scrollToOffsetFromBottomWhenStable } from "../utils/function";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -7,7 +8,7 @@ const Navbar = () => {
   return (
     <header className="fixed top-0 left-0 w-full bg-black text-white shadow-md z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        
+
         {/* Left side: Logos */}
         <div className="flex items-center gap-4">
           <img src="/aiims.png" alt="aiims" className="h-10 w-auto" />
@@ -19,14 +20,14 @@ const Navbar = () => {
           <a href="#home" className="navbar-anchor">HOME</a>
           {/* <a href="#brochure" className="navbar-anchor">BROCHURE</a> */}
           <a
-  href="/Eternia.pdf"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="navbar-anchor"
->
-  BROCHURE
-</a>
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSe7IRZ59WLepZGCIx0TW63doT2vFhrJ1GNmurdiW7qJS5lfUA/viewform?usp=publish-editor" className="navbar-anchor">REGISTRATION</a>
+            href="/Eternia.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="navbar-anchor"
+          >
+            BROCHURE
+          </a>
+          <a className="navbar-anchor" onClick={() => scrollToOffsetFromBottomWhenStable(3100)} style={{ cursor: "pointer" }}>REGISTRATION</a>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -35,19 +36,16 @@ const Navbar = () => {
           className="md:hidden flex flex-col justify-center items-center space-y-1.5"
         >
           <span
-            className={`block h-0.5 w-6 bg-white transform transition ${
-              isOpen ? "rotate-45 translate-y-2" : ""
-            }`}
+            className={`block h-0.5 w-6 bg-white transform transition ${isOpen ? "rotate-45 translate-y-2" : ""
+              }`}
           />
           <span
-            className={`block h-0.5 w-6 bg-white transition ${
-              isOpen ? "opacity-0" : ""
-            }`}
+            className={`block h-0.5 w-6 bg-white transition ${isOpen ? "opacity-0" : ""
+              }`}
           />
           <span
-            className={`block h-0.5 w-6 bg-white transform transition ${
-              isOpen ? "-rotate-45 -translate-y-2" : ""
-            }`}
+            className={`block h-0.5 w-6 bg-white transform transition ${isOpen ? "-rotate-45 -translate-y-2" : ""
+              }`}
           />
         </button>
       </div>
