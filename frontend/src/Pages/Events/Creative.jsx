@@ -31,7 +31,7 @@ const SportsEvent = () => {
   useEffect(() => {
     const fetchSportsData = async () => {
       try {
-        const { data } = await axios.get("/events/sports");
+        const { data } = await axios.get("/events/creative");
         if (data.isSuccess && data.data) {
           setFormData((prev) => ({ ...prev, categoryName: data.data.category }));
           setSubcategories(data.data.subcategories);

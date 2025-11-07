@@ -17,6 +17,10 @@ import Terms from './Pages/Terms';
 import PrivacyPolicy from './Pages/PrivacyPolicy';
 import RefundPolicy from './Pages/RefundPolicy';
 import SportsEvent from './Pages/Events/SportsEvent';
+import Literary from './Pages/Events/Literary';
+import Informal from './Pages/Events/Informal';
+import Creative from './Pages/Events/Creative';
+import Esports from './Pages/Events/Esports';
 import Login from './Pages/Login';
 export default function App() {
   return (
@@ -54,6 +58,10 @@ export default function App() {
 
               {/* Event pages */}
               <Route path="/sports" element={<SportsEvent />} />
+              <Route path="/literary" element={<Literary />} />
+              <Route path="/informal" element={<Informal />} />
+              <Route path="/esports" element={<Esports />} />
+              <Route path="/creative" element={<Creative />} />
             </Routes>
           </main>
 
