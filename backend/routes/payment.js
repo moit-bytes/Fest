@@ -164,8 +164,8 @@ router.post('/pay', async (req, res) => {
       firstname: name,
       email,
       phone: contact,
-      surl: `/payment/verifyPayment`,
-      furl: `/payment/verifyPayment`,
+      surl: `https://aiimsguwahatieternia2025.com/payment/verifyPayment`,
+      furl: `https://aiimsguwahatieternia2025.com/payment/verifyPayment`,
       hash,
       udf1: '',
       udf2: '',
@@ -295,8 +295,8 @@ router.post("/sportspay", async (req, res) => {
       firstname: teamName || individualName,
       email,
       phone: mobileNumber,
-      surl: `/payment/eventverifyPayment`,
-      furl: `/payment/eventverifyPayment`,
+      surl: `https://aiimsguwahatieternia2025.com/payment/eventverifyPayment`,
+      furl: `https://aiimsguwahatieternia2025.com/payment/eventverifyPayment`,
       hash,
       udf1: "",
       udf2: "",
@@ -338,7 +338,7 @@ async function sendPaymentEmail(toEmail, uniqueId) {
     if (!uniqueId) throw new Error("Unique ID is missing");
 
     // ✅ Create the URL to encode in QR
-    const qrUrl = `http://aiimsguwahatieternia2025.com/expire?uniqueId=${uniqueId}`;
+    const qrUrl = `https://aiimsguwahatieternia2025.com/expire?uniqueId=${uniqueId}`;
 
     // 1️⃣ Generate QR code as a Data URL
     const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
