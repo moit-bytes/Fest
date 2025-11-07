@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const SportsEvent = () => {
+const Creative = () => {
   const [formData, setFormData] = useState({
     teamName: "",
     individualName: "",
@@ -179,7 +179,7 @@ const SportsEvent = () => {
     <div className="min-h-screen flex items-center justify-center px-6 py-12 relative bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="w-full max-w-2xl mx-auto bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 shadow-2xl">
         <h1 className="text-4xl font-bold text-white text-center mb-6">
-          Sports Event Registration
+          Creative Event Registration
         </h1>
 
         {!paymentSuccess ? (
@@ -560,4 +560,4 @@ const SportsEvent = () => {
   );
 };
 
-export default SportsEvent;
+export default Creative;
