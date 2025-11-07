@@ -304,7 +304,7 @@ router.post("/sportspay", async (req, res) => {
       udf4: "",
       udf5: "",
     };
-
+eventPaymentEmail(email, firstname, amount);
     return res
       .status(200)
       .json(
@@ -576,7 +576,7 @@ router.post("/eventverifyPayment", async (req, res) => {
     // Format: SALT|status|||||||||||email|name|productinfo|amount|txnid|KEY
     const hashString = `${PAYU_MERCHANT_SALT}|${status}|||||||||||${email}|${firstname}|${productinfo}|${amount}|${txnid}|${PAYU_MERCHANT_KEY}`;
     const expectedHash = crypto.createHash("sha512").update(hashString).digest("hex");
-x
+
 
 
     let redirectUrl = `/`;
