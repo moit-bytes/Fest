@@ -22,6 +22,7 @@ import Informal from './Pages/Events/Informal';
 import Creative from './Pages/Events/Creative';
 import Esports from './Pages/Events/Esports';
 import Login from './Pages/Login';
+import EventPaymentTable from './Components/EventPaymentTable';
 export default function App() {
   return (
     <RecoilRoot>
@@ -55,6 +56,7 @@ export default function App() {
               <Route path="/refundpolicy" element={<RefundPolicy />} />
               {/* Data Page */}
               <Route path="/data" element={<PaymentTable />} />
+              <Route path="/eventData" element={<EventPaymentTable/>} />
 
               {/* Event pages */}
               <Route path="/sports" element={<SportsEvent />} />

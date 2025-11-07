@@ -118,7 +118,7 @@ router.post('/pay', async (req, res) => {
 
     const txnid = uuidv4().replace(/-/g, '').slice(0, 20);
     const productinfo = "Eternia Pass";
-    const amountINR = 1;
+    const amountINR = 500;
 
     // ✅ Correct PayU test hash formula (single hash)
     const hashString = `${PAYU_MERCHANT_KEY}|${txnid}|${amountINR}|${productinfo}|${name}|${email}|||||||||||${PAYU_MERCHANT_SALT}`;

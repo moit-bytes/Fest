@@ -5,6 +5,7 @@ const { adminSecret } = require('../middleware/auth');
 const {authenticateAdminJwt} = require('../middleware/auth');
 const {User} = require('../db/db')
 const { Payment } = require('../db/db');
+const {EventPayment} = require('../db/db'); 
 const router = express.Router();
 
 router.post('/signup', async(req,res)=>{
@@ -48,6 +49,15 @@ router.post('/login',async (req,res)=>{
 router.get("/all",authenticateAdminJwt, async (req, res) => {
   const payments = await Payment.find({});
   res.json(payments);
+});
+router.get("/allevents", authenticateAdminJwt, async (req, res) => {
+  try {
+    const eventPayments = await EventPayment.find({});
+    res.json(eventPayments);
+  } catch (error) {
+    console.error("Error fetching event payments:", error);
+    res.status(500).json({ message: "Failed to fetch event payments" });
+  }
 });
 router.post('/expire',authenticateAdminJwt, async (req, res) => {
   try {

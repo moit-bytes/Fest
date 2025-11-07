@@ -314,7 +314,7 @@ const RegisterPage = () => {
                       Processing...
                     </div>
                   ) : (
-                    "Register & Pay ₹5"
+                    "Register & Pay ₹500"
                   )}
                 </button>
               </div>
