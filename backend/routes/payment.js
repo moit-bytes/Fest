@@ -235,9 +235,9 @@ router.post("/sportspay", async (req, res) => {
     const txnid = uuidv4().replace(/-/g, "").slice(0, 20);
     const productinfo = "Sports Event";
     const amountINR = amount;
-
+ const firstname = teamName || individualName;
     // ✅ PayU hash generation
-    const hashString = `${PAYU_MERCHANT_KEY}|${txnid}|${amountINR}|${productinfo}|${teamName || individualName}|${email}|||||||||||${PAYU_MERCHANT_SALT}`;
+    const hashString = `${PAYU_MERCHANT_KEY}|${txnid}|${amountINR}|${productinfo}|${firstname}|${email}|||||||||||${PAYU_MERCHANT_SALT}`;
     const hash = crypto.createHash("sha512").update(hashString).digest("hex");
 
 
@@ -568,17 +568,15 @@ router.post("/eventverifyPayment", async (req, res) => {
       hash: receivedHash,
       amount,
       productinfo,
-      teamName,
-      individualName,
+      firstname,
       email,
-     
     } = req.body;
 
     // ✅ Reversed hash string formula for verification
     // Format: SALT|status|||||||||||email|name|productinfo|amount|txnid|KEY
-    const hashString = `${PAYU_MERCHANT_SALT}|${status}|||||||||||${email}|${teamName || individualName}|${productinfo}|${amount}|${txnid}|${PAYU_MERCHANT_KEY}`;
+    const hashString = `${PAYU_MERCHANT_SALT}|${status}|||||||||||${email}|${firstname}|${productinfo}|${amount}|${txnid}|${PAYU_MERCHANT_KEY}`;
     const expectedHash = crypto.createHash("sha512").update(hashString).digest("hex");
-
+x
 
 
     let redirectUrl = `/`;
@@ -589,7 +587,7 @@ router.post("/eventverifyPayment", async (req, res) => {
         { status: "issued", payuPaymentId: mihpayid },
         { new: true }
       );
-eventPaymentEmail(email, teamName||individualName, amount);
+eventPaymentEmail(email, firstname, amount);
       redirectUrl += `?success=true&uniqueId=${txnid}&email=${encodeURIComponent(email)}`;
     } else {
       await EventPayment.findOneAndUpdate(
