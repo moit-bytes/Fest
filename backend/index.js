@@ -4,14 +4,18 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const userRouter = require('./routes/user.js');
 const paymentRouter = require('./routes/payment.js');
+const eventRouter = require('./routes/events.js');
 const path = require("path");
+const bodyParser = require('body-parser');
 const app = express();
 dotenv.config();
 app.use(cors())
 app.use(express.json());
-
+// ✅ Parse URL-encoded bodies (important for PayU)
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/user',userRouter);
 app.use('/payment',paymentRouter);
+app.use('/events',eventRouter);
 
 app.use(express.static(path.join(__dirname, "public")));
 app.get(/.*/, (req, res) => {

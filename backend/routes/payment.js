@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const Razorpay = require('razorpay');
+const nodemailer = require("nodemailer");
+const QRCode = require("qrcode");
+// const Razorpay = require('razorpay');
 const { v4: uuidv4 } = require('uuid');
+const dotenv = require('dotenv');
+dotenv.config();
 // const { authenticateUserJwt } = require('../middleware/auth'); // ✅ if auth exports an object
 const { Payment } = require('../db/db');
+const {EventPayment} = require('../db/db');
 const crypto = require('crypto'); 
 const { z } = require("zod");
 const axios = require('axios');
-
+const Response = require('../utils/response'); 
 const paymentValidationSchema = z.object({
   name: z
     .string()
@@ -25,136 +30,538 @@ const paymentValidationSchema = z.object({
     .min(1, "Contact number is required")
     .regex(/^\d{10}$/, "Contact number must be 10 digits"),
 });
+const sportPaymentValidationSchema = z
+  .object({
+        categoryName: z.string().min(1, "Category name is required"),
+    subCategory: z.string().min(1, "Subcategory is required"),
+    teamName: z.string().optional(),
+    individualName: z.string().optional(),
+    leaderName: z.string().optional(),
+    mobileNumber: z.string().min(10, "Mobile number must be at least 10 digits"),
+    institutionName: z.string().optional(),
+    email: z.string().email("Invalid email format"),
+    aadhaarCard: z.string().optional(),
+    collegeId: z.string().optional(),
+    amount: z.number().positive("Amount must be positive"),
+  })
+  .superRefine((data, ctx) => {
+    // Either teamName or individualName must exist
+    if (!data.teamName && !data.individualName) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Either teamName or individualName is required.",
+        path: ["teamName"],
+      });
+    }
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
-});
+    // If teamName exists, leaderName is required
+    if (data.teamName && !data.leaderName) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "leaderName is required when teamName is provided.",
+        path: ["leaderName"],
+      });
+    }
+    if (!data.teamName && data.leaderName) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "TeamName is required when LeaderName is provided.",
+        path: ["teamname"],
+      });
+    }
+    // Aadhaar or CollegeID logic
+    if (data.institutionName) {
+      if (!data.collegeId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "collegeId is required when institutionName is provided.",
+          path: ["collegeId"],
+        });
+      }
+    } else {
+      if (!data.aadhaarCard) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "aadhaarCard is required when institutionName is not provided.",
+          path: ["aadhaarCard"],
+        });
+      }
+    }
+  });
+
+// const razorpay = new Razorpay({
+//   key_id: process.env.RAZORPAY_KEY_ID,
+//   key_secret: process.env.RAZORPAY_KEY_SECRET
+// });
+const PAYU_MERCHANT_KEY = process.env.PAYU_MERCHANT_KEY;
+const PAYU_MERCHANT_SALT = process.env.PAYU_MERCHANT_SALT;
+
+const PAYU_BASE_URL = process.env.PAYU_BASE_URL || "https://test.payu.in"; // test
+
 
 router.post('/pay', async (req, res) => {
-
   try {
-        const { name, email, contact } = paymentValidationSchema.parse(req.body);
-        const existingIssuedPayment = await Payment.findOne({
-      email,
-       status: { $in: ['issued', 'expired'] }
+    const { name, email, contact } = paymentValidationSchema.parse(req.body);
 
+    // Optional: prevent duplicate initiated/expired payments
+    const existingIssuedPayment = await Payment.findOne({
+      email,
+      status: { $in: ['issued', 'expired'] }
     });
 
     if (existingIssuedPayment) {
-      return res.status(400).json({
-        error: 'This email has already completed a payment.'
-      });
+      return res
+        .status(400)
+        .json(new Response(400, "This email has already completed a payment.", false));
     }
-    const amountINR = 5;
-    const amountPaise = amountINR * 100;
-    const uniqueId = uuidv4().replace(/-/g, '').slice(0, 32);
+ 
 
-    const order = await razorpay.orders.create({
-      amount: amountPaise,
-      currency: "INR",
-      receipt: `receipt_${uniqueId}`,
-      payment_capture: 1
-    });
-let paymentDoc = await Payment.findOne({
+    const txnid = uuidv4().replace(/-/g, '').slice(0, 20);
+    const productinfo = "Eternia Pass";
+    const amountINR = 1;
+
+    // ✅ Correct PayU test hash formula (single hash)
+    const hashString = `${PAYU_MERCHANT_KEY}|${txnid}|${amountINR}|${productinfo}|${name}|${email}|||||||||||${PAYU_MERCHANT_SALT}`;
+    const hash = crypto.createHash('sha512').update(hashString).digest('hex');
+    
+    // ✅ Log to verify correctness (optional)
+    console.log("PayU Hash String:", hashString);
+    console.log("Generated Hash:", hash);
+ 
+  let paymentDoc = await Payment.findOne({
       email,
       status: { $in: ['initiated', 'failed'] }
     });
 
-   if (paymentDoc) {
-      // Update existing payment
+    if (paymentDoc) {
+      // ✅ Update existing payment document
       paymentDoc.name = name;
       paymentDoc.contact = contact;
-      paymentDoc.amount = amountPaise;
-      paymentDoc.razorpayOrderId = order.id;
-      paymentDoc.uniqueId = uniqueId;
+      paymentDoc.amount = amountINR;
+      paymentDoc.uniqueId = txnid;
       paymentDoc.status = 'initiated';
       await paymentDoc.save();
     } else {
-      // Create new payment
+      // ✅ Create new payment document
       paymentDoc = new Payment({
-        email,
         name,
+        email,
         contact,
-        amount: amountPaise,
-        razorpayOrderId: order.id,
-        uniqueId,
+        amount: amountINR,
+        uniqueId: txnid,
         status: 'initiated'
       });
       await paymentDoc.save();
     }
 
-    res.json({
+    const payuUrl = `${PAYU_BASE_URL}/_payment`;
+
+    const payuData = {
+      key: PAYU_MERCHANT_KEY,
+      txnid,
+      amount: amountINR,
+      productinfo,
+      firstname: name,
       email,
-      name,
-      contact,
-      message: 'order_created',
-      uniqueId,
-      order: {
-        id: order.id,
-        amount: order.amount,
-        currency: order.currency
-      },
-      razorpayKeyId: process.env.RAZORPAY_KEY_ID
-    });
+      phone: contact,
+      surl: `/payment/verifyPayment`,
+      furl: `/payment/verifyPayment`,
+      hash,
+      udf1: '',
+      udf2: '',
+      udf3: '',
+      udf4: '',
+      udf5: ''
+    };
+
+    return res
+      .status(200)
+      .json(new Response(200, "Order created successfully", true, {
+        payuUrl,
+        payuData,
+        // uniqueId: txnid
+        // ${process.env.BASE_URL}
+      }));
+
   } catch (err) {
     if (err.name === "ZodError") {
-      return res.status(400).json({ error: err.errors.map(e => e.message) });
+      return res
+        .status(400)
+        .json(new Response(400, err.errors.map(e => e.message).join(", "), false));
     }
     console.error(err);
-    res.status(500).json({ error: err.message });
+    return res
+      .status(500)
+      .json(new Response(500, "Internal Server Error", false, err.message));
   }
 });
+router.post("/sportspay", async (req, res) => {
+  try {
+    // ✅ Validate input using Zod schema
+    const validatedData = sportPaymentValidationSchema.parse(req.body);
+    const {
+        categoryName,
+    subCategory,
+      teamName,
+      individualName,
+      leaderName,
+      mobileNumber,
+      institutionName,
+      email,
+      aadhaarCard,
+      collegeId,
+      amount,
+    } = validatedData;
+
+    // ✅ Check for existing payment with same email and issued status
+    const existingIssuedPayment = await EventPayment.findOne({
+      email,
+      status: { $in: ["issued", "expired"] },
+    });
+
+    if (existingIssuedPayment) {
+      return res
+        .status(400)
+        .json(
+          new Response(
+            400,
+            "This email has already completed a sports payment.",
+            false
+          )
+        );
+    }
+
+    // ✅ Generate unique transaction ID
+    const txnid = uuidv4().replace(/-/g, "").slice(0, 20);
+    const productinfo = "Sports Event";
+    const amountINR = amount;
+
+    // ✅ PayU hash generation
+    const hashString = `${PAYU_MERCHANT_KEY}|${txnid}|${amountINR}|${productinfo}|${teamName || individualName}|${email}|||||||||||${PAYU_MERCHANT_SALT}`;
+    const hash = crypto.createHash("sha512").update(hashString).digest("hex");
 
 
 
+    // ✅ Find existing pending payment
+    let paymentDoc = await EventPayment.findOne({
+      email,
+      status: { $in: ["initiated", "failed"] },
+    });
+
+    if (paymentDoc) {
+      // Update existing record
+      Object.assign(paymentDoc, {
+          categoryName,
+      subCategory,
+        teamName,
+        individualName,
+        leaderName,
+        mobileNumber,
+        institutionName,
+        aadhaarCard,
+        collegeId,
+        amount: amountINR,
+        uniqueId: txnid,
+        status: "initiated",
+      });
+      await paymentDoc.save();
+    } else {
+      // Create new record
+      paymentDoc = new EventPayment({
+          categoryName,
+      subCategory,
+        teamName,
+        individualName,
+        leaderName,
+        mobileNumber,
+        institutionName,
+        aadhaarCard,
+        collegeId,
+        email,
+        amount: amountINR,
+        uniqueId: txnid,
+        status: "initiated",
+      });
+      await paymentDoc.save();
+    }
+
+    // ✅ PayU data payload
+    const payuUrl = `${PAYU_BASE_URL}/_payment`;
+    const payuData = {
+      key: PAYU_MERCHANT_KEY,
+      txnid,
+      amount: amountINR,
+      productinfo,
+      firstname: teamName || individualName,
+      email,
+      phone: mobileNumber,
+      surl: `/payment/eventverifyPayment`,
+      furl: `/payment/eventverifyPayment`,
+      hash,
+      udf1: "",
+      udf2: "",
+      udf3: "",
+      udf4: "",
+      udf5: "",
+    };
+
+    return res
+      .status(200)
+      .json(
+        new Response(200, "Sports payment initiated successfully", true, {
+          payuUrl,
+          payuData,
+        })
+      );
+  } catch (err) {
+    if (err.name === "ZodError") {
+      return res
+        .status(400)
+        .json(
+          new Response(
+            400,
+            err.errors.map((e) => e.message).join(", "),
+            false
+          )
+        );
+    }
+    console.error(err);
+    return res
+      .status(500)
+      .json(
+        new Response(500, "Internal Server Error", false, err.message)
+      );
+  }
+});
+async function sendPaymentEmail(toEmail, uniqueId) {
+  try {
+    if (!uniqueId) throw new Error("Unique ID is missing");
+
+    // ✅ Create the URL to encode in QR
+    const qrUrl = `http://aiimsguwahatieternia2025.com/expire?uniqueId=${uniqueId}`;
+
+    // 1️⃣ Generate QR code as a Data URL
+    const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
+      errorCorrectionLevel: "H",
+      type: "image/png",
+      width: 300,
+    });
+
+    // 2️⃣ Configure nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // 3️⃣ Compose email
+    const mailOptions = {
+      from: `"Event Team" <${process.env.EMAIL_USER}>`,
+      to: toEmail,
+      subject: "Payment Successful - Your Unique ID",
+      html: `
+        <h3>Payment Successful!</h3>
+        <p>Your Unique ID is: <strong>${uniqueId}</strong></p>
+        <p>Scan this QR code to access your payment details:</p>
+        <img src="${qrCodeDataUrl}" alt="QR Code" />
+      `,
+    };
+
+    // 4️⃣ Send the email
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+  } catch (err) {
+    console.error("Error sending payment email:", err);
+  }
+}
+async function eventPaymentEmail(toEmail, participantName, amount) {
+  try {
+    // ✅ Configure nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // ✅ Compose simple congratulations email
+    const mailOptions = {
+      from: `"Event Team" <${process.env.EMAIL_USER}>`,
+      to: toEmail,
+      subject: "Congratulations! Payment Successful",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #4CAF50;">🎉 Congratulations ${participantName}!</h2>
+          
+          <p style="font-size: 16px; line-height: 1.6;">
+            You have successfully participated by paying <strong>₹${amount}</strong> for the event.
+          </p>
+          
+          <p style="font-size: 14px; color: #666; margin-top: 30px;">
+            See you at the event! 🎊
+          </p>
+        </div>
+      `,
+    };
+
+    // ✅ Send the email
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+    return { success: true, messageId: info.messageId };
+  } catch (err) {
+    console.error("Error sending payment email:", err);
+    throw err;
+  }
+}
+
+// router.post("/verifyPayment", async (req, res) => {
+//   try {
+//     const {
+//       mihpayid,
+//       status,
+//       txnid,
+//       hash,
+//       key,
+//       amount,
+//       productinfo,
+//       firstname,
+//       email
+//     } = req.body;
+
+//     // ✅ Recreate hash to verify authenticity
+//     const hashSequence = `${PAYU_MERCHANT_SALT}|${status}|||||||||||${email}|${firstname}|${productinfo}|${amount}|${txnid}|${key}`;
+//     const expectedHash = crypto.createHash('sha512').update(hashSequence).digest('hex');
+//     let redirectUrl = `${process.env.FRONTEND_URL}`;
+//     if (hash === expectedHash && status === 'success') {
+//       await Payment.findOneAndUpdate(
+//         { uniqueId: txnid },
+//         { status: "issued", payuPaymentId: mihpayid },
+//         { new: true }
+//       );
+
+//       return res
+//         .status(200)
+//         .json(new Response(200, "Payment verified successfully", true, { txnid, mihpayid }));
+//     } else {
+//       await Payment.findOneAndUpdate(
+//         { uniqueId: txnid },
+//         { status: "failed" }
+//       );
+//       return res
+//         .status(400)
+//         .json(new Response(400, "Invalid hash or failed payment", false));
+//     }
+//   } catch (err) {
+//     console.error("Error verifying payment:", err);
+//     if (req.body.txnid) {
+//       await Payment.findOneAndUpdate(
+//         { uniqueId: req.body.txnid },
+//         { status: "failed" }
+//       );
+//     }
+//     return res
+//       .status(500)
+//       .json(new Response(500, "Payment verification failed", false, err.message));
+//   }
+// });
 router.post("/verifyPayment", async (req, res) => {
   try {
     const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      uniqueId,
+      mihpayid,
+      status,
+      txnid,
+      hash,
+      key,
+      amount,
+      productinfo,
+      firstname,
+      email
     } = req.body;
 
-    const sign = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSign = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(sign.toString())
-      .digest("hex");
+    const hashSequence = `${PAYU_MERCHANT_SALT}|${status}|||||||||||${email}|${firstname}|${productinfo}|${amount}|${txnid}|${key}`;
+    const expectedHash = crypto.createHash("sha512").update(hashSequence).digest("hex");
 
-    if (razorpay_signature === expectedSign) {
-      // ✅ Payment successful → set to issued
+    let redirectUrl = `/`;
+
+    if (hash === expectedHash && status === "success") {
       await Payment.findOneAndUpdate(
-        { uniqueId },
-        { 
-          status: "issued",
-          razorpayPaymentId: razorpay_payment_id 
-        }
+        { uniqueId: txnid },
+        { status: "issued", payuPaymentId: mihpayid },
+        { new: true }
       );
-
-      return res.json({ message: "Payment verified successfully" });
+ sendPaymentEmail(email, txnid);
+      // ✅ Redirect with success params
+      redirectUrl += `?success=true&uniqueId=${txnid}&email=${encodeURIComponent(email)}`;
     } else {
-      // ❌ Signature mismatch → set to failed
       await Payment.findOneAndUpdate(
-        { uniqueId },
+        { uniqueId: txnid },
         { status: "failed" }
       );
-
-      return res.status(400).json({ error: "Invalid signature" });
+      // ❌ Redirect with error params
+      redirectUrl += `?success=false&message=Payment failed or hash mismatch`;
     }
+
+    return res.redirect(redirectUrl);
+
   } catch (err) {
     console.error("Error verifying payment:", err);
 
-    // ❌ Error occurred → set to failed
-    if (req.body.uniqueId) {
-      await Payment.findOneAndUpdate(
-        { uniqueId: req.body.uniqueId },
+    const redirectUrl = `/register?success=false&message=${encodeURIComponent(err.message)}`;
+    return res.redirect(redirectUrl);
+  }
+});
+//verifyevent
+router.post("/eventverifyPayment", async (req, res) => {
+  try {
+    const {
+      mihpayid,
+      status,
+      txnid,
+      hash: receivedHash,
+      amount,
+      productinfo,
+      teamName,
+      individualName,
+      email,
+     
+    } = req.body;
+
+    // ✅ Reversed hash string formula for verification
+    // Format: SALT|status|||||||||||email|name|productinfo|amount|txnid|KEY
+    const hashString = `${PAYU_MERCHANT_SALT}|${status}|||||||||||${email}|${teamName || individualName}|${productinfo}|${amount}|${txnid}|${PAYU_MERCHANT_KEY}`;
+    const expectedHash = crypto.createHash("sha512").update(hashString).digest("hex");
+
+
+
+    let redirectUrl = `/`;
+
+    if (receivedHash === expectedHash && status === "success") {
+      await EventPayment.findOneAndUpdate(
+        { uniqueId: txnid },
+        { status: "issued", payuPaymentId: mihpayid },
+        { new: true }
+      );
+eventPaymentEmail(email, teamName||individualName, amount);
+      redirectUrl += `?success=true&uniqueId=${txnid}&email=${encodeURIComponent(email)}`;
+    } else {
+      await EventPayment.findOneAndUpdate(
+        { uniqueId: txnid },
         { status: "failed" }
       );
+
+      redirectUrl += `?success=false&message=Payment failed or hash mismatch`;
     }
 
-    res.status(500).json({ error: "Payment verification failed" });
+    return res.redirect(redirectUrl);
+
+  } catch (err) {
+    console.error("Error verifying payment:", err);
+
+    const redirectUrl = `${process.env.FRONTEND_URL}/register?success=false&message=${encodeURIComponent(err.message)}`;
+    return res.redirect(redirectUrl);
   }
 });
 

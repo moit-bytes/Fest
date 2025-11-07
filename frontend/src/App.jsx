@@ -16,7 +16,8 @@ import PaymentTable from './Components/PaymentTable';
 import Terms from './Pages/Terms';
 import PrivacyPolicy from './Pages/PrivacyPolicy';
 import RefundPolicy from './Pages/RefundPolicy';
-
+import SportsEvent from './Pages/Events/SportsEvent';
+import Login from './Pages/Login';
 export default function App() {
   return (
     <RecoilRoot>
@@ -43,12 +44,16 @@ export default function App() {
               />
 
               {/* Register Page */}
+              <Route path="/login" element={<Login />} />
               <Route path="/expire" element={<ExpirePayment />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacypolicy" element={<PrivacyPolicy />} />
               <Route path="/refundpolicy" element={<RefundPolicy />} />
               {/* Data Page */}
               <Route path="/data" element={<PaymentTable />} />
+
+              {/* Event pages */}
+              <Route path="/sports" element={<SportsEvent />} />
             </Routes>
           </main>
 
