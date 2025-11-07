@@ -207,11 +207,10 @@ const Creative = () => {
                 name="subCategory"
                 value={formData.subCategory}
                 onChange={handleSubcategoryChange}
-                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                  validationErrors.subCategory
-                    ? "border-red-500"
-                    : "border-gray-600"
-                }`}
+                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.subCategory
+                  ? "border-red-500"
+                  : "border-gray-600"
+                  }`}
               >
                 <option value="">Select Subcategory</option>
                 {subcategories.map((sub) => (
@@ -255,11 +254,10 @@ const Creative = () => {
                     value={formData.teamName}
                     onChange={handleInputChange}
                     placeholder="Enter your team name"
-                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                      validationErrors.teamName
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
+                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.teamName
+                      ? "border-red-500"
+                      : "border-gray-600"
+                      }`}
                   />
                   {validationErrors.teamName && (
                     <p className="text-red-400 text-xs mt-1">
@@ -278,11 +276,10 @@ const Creative = () => {
                     value={formData.leaderName}
                     onChange={handleInputChange}
                     placeholder="Enter leader name"
-                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                      validationErrors.leaderName
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
+                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.leaderName
+                      ? "border-red-500"
+                      : "border-gray-600"
+                      }`}
                   />
                   {validationErrors.leaderName && (
                     <p className="text-red-400 text-xs mt-1">
@@ -305,11 +302,10 @@ const Creative = () => {
                   value={formData.individualName}
                   onChange={handleInputChange}
                   placeholder="Enter your name"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                    validationErrors.individualName
-                      ? "border-red-500"
-                      : "border-gray-600"
-                  }`}
+                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.individualName
+                    ? "border-red-500"
+                    : "border-gray-600"
+                    }`}
                 />
                 {validationErrors.individualName && (
                   <p className="text-red-400 text-xs mt-1">
@@ -331,11 +327,10 @@ const Creative = () => {
                 onChange={handleInputChange}
                 placeholder="10-digit mobile number"
                 maxLength="10"
-                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                  validationErrors.mobileNumber
-                    ? "border-red-500"
-                    : "border-gray-600"
-                }`}
+                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.mobileNumber
+                  ? "border-red-500"
+                  : "border-gray-600"
+                  }`}
               />
               {validationErrors.mobileNumber && (
                 <p className="text-red-400 text-xs mt-1">
@@ -355,9 +350,8 @@ const Creative = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email"
-                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                  validationErrors.email ? "border-red-500" : "border-gray-600"
-                }`}
+                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.email ? "border-red-500" : "border-gray-600"
+                  }`}
               />
               {validationErrors.email && (
                 <p className="text-red-400 text-xs mt-1">
@@ -404,11 +398,10 @@ const Creative = () => {
                   value={formData.institutionName}
                   onChange={handleInputChange}
                   placeholder="Enter institution name"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                    validationErrors.institutionName
-                      ? "border-red-500"
-                      : "border-gray-600"
-                  }`}
+                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.institutionName
+                    ? "border-red-500"
+                    : "border-gray-600"
+                    }`}
                 />
                 {validationErrors.institutionName && (
                   <p className="text-red-400 text-xs mt-1">
@@ -430,11 +423,10 @@ const Creative = () => {
                   value={formData.collegeId}
                   onChange={handleInputChange}
                   placeholder="Enter your college ID"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                    validationErrors.collegeId
-                      ? "border-red-500"
-                      : "border-gray-600"
-                  }`}
+                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.collegeId
+                    ? "border-red-500"
+                    : "border-gray-600"
+                    }`}
                 />
                 {validationErrors.collegeId && (
                   <p className="text-red-400 text-xs mt-1">
@@ -457,11 +449,10 @@ const Creative = () => {
                   onChange={handleInputChange}
                   placeholder="Enter 12-digit Aadhaar number"
                   maxLength="12"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                    validationErrors.aadhaarCard
-                      ? "border-red-500"
-                      : "border-gray-600"
-                  }`}
+                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.aadhaarCard
+                    ? "border-red-500"
+                    : "border-gray-600"
+                    }`}
                 />
                 {validationErrors.aadhaarCard && (
                   <p className="text-red-400 text-xs mt-1">
@@ -501,7 +492,7 @@ const Creative = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 px-4">
           <div className="bg-gray-800 p-6 rounded-2xl w-full max-w-md border border-gray-700 shadow-xl">
             <h2 className="text-xl font-bold text-white mb-4 text-center">Confirm Registration</h2>
-            
+
             <div className="space-y-2 text-sm mb-6">
               <div className="flex justify-between">
                 <span className="text-gray-400">Category:</span>
@@ -534,11 +525,11 @@ const Creative = () => {
                 <span className="text-white font-semibold">{formData.email}</span>
               </div>
             </div>
-            
+
             <p className="text-green-400 text-lg font-semibold mb-6 text-center">
               Registration Fee: ₹{selectedFee}
             </p>
-            
+
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => setShowConfirmModal(false)}

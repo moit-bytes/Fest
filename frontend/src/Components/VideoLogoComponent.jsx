@@ -24,13 +24,23 @@ const VideoLogoComponent = () => {
       {/* Logo Section */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-white">
         <div className="mb-8 relative">
-          <div className="relative w-96 h-96 flex items-center justify-center">
-            <div className="absolute inset-0 bg-white rounded-full opacity-20 blur-xl animate-pulse" />
-            <div className="relative w-80 h-80 bg-white rounded-full flex items-center justify-center shadow-2xl border-4 border-gray-200">
+          <div className="relative flex items-center justify-center" style={{
+            width: "80vw",
+            height: "80vh"
+          }}>
+            <div className="absolute inset-0 bg-black rounded-full opacity-20 blur-xl animate-pulse" />
+            <div className="relative flex items-center justify-center" style={{
+              width: "80vw",
+              height: "80vh"
+            }}>
               <img
                 src="/logo.png"
                 alt="ETERNIA 2025"
-                className="w-full h-full object-contain rounded-full"
+                className="object-contain rounded-full"
+                style={{
+                  width: "80vw",
+                  height: "80vh"
+                }}
                 onError={(e) => {
                   e.target.style.display = "none";
                   e.target.nextSibling.style.display = "flex";
@@ -47,16 +57,18 @@ const VideoLogoComponent = () => {
         </div>
 
         {/* Subtle pulsing effect rings */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-96 h-96 rounded-full border border-white opacity-10 animate-pulse" />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-5">
+          <div className="w-86 h-86 rounded-full opacity-10 animate-pulse" />
         </div>
       </div>
 
       {/* Event Text */}
       <div className="relative z-20 text-center mb-8">
-        <h1 className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wide mb-4 bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent drop-shadow-2xl">
-          ETERNIA 2025
+        <h1 className="typing-title text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wide mb-4 bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent drop-shadow-2xl">
+          ETERNIA
+          <span className="block md:inline">&nbsp;2025</span>
         </h1>
+
         <p className="text-xl md:text-2xl tracking-widest text-purple-300 font-medium mb-4">
           #UNMASK THE NIGHTS
         </p>

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Category } = require("../db/db"); // adjust path as needed
-const Response = require('../utils/response'); 
+const Response = require('../utils/response');
 // 📘 Helper function to get category by name
 async function getCategoryByName(categoryName, res) {
   try {
@@ -58,6 +58,11 @@ router.get("/literary", async (req, res) => {
 // 🎮 Esports
 router.get("/esports", async (req, res) => {
   await getCategoryByName("Esports", res);
+});
+
+// 🎨 Cultural
+router.get("/cultural", async (req, res) => {
+  await getCategoryByName("Cultural", res);
 });
 
 module.exports = router;
