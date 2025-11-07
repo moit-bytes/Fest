@@ -603,7 +603,7 @@ eventPaymentEmail(email, firstname, amount);
   } catch (err) {
     console.error("Error verifying payment:", err);
 
-    const redirectUrl = `/register?success=false&message=${encodeURIComponent(err.message)}`;
+    const redirectUrl = `/?success=false&message=${encodeURIComponent(err.message)}`;
     return res.redirect(redirectUrl);
   }
 });
