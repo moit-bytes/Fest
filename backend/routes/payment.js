@@ -435,32 +435,91 @@ async function sendPaymentEmail(toEmail, uniqueId) {
 }
 
 function getRegistrationForm(eventName, teamName) {
-  const name = eventName.trim().toLowerCase();
+  const name = eventName.toLowerCase();
 
-  if (name.includes("ocean jam") || name.includes("battle of the bands")) {
-    return "https://forms.gle/8fW1UhuEorkafYhUA";
+  const forms = {
+    "football": "https://docs.google.com/forms/d/e/1FAIpQLSeu1wVow_oXS-bWuE5ZwvSvAkDa4XGt3ZnTs-KHlgvBCcbfmg/viewform?usp=header",
+    "cricket": "https://docs.google.com/forms/d/e/1FAIpQLScPV6FL_xzAmS1tBYltSYq0t_4amk2J3J41J-6_VOfCbdSYxw/viewform?usp=header",
+    "volleyball": "https://forms.gle/M3B3kUb42kMkeVQp7",
+    "basketball": "https://docs.google.com/forms/d/e/1FAIpQLSf9iXrVTR30VqUe4vkGb4foNtchGjeytR1G1zIKoxWM-2mKoA/viewform?usp=header",
+    "kabaddi": "https://docs.google.com/forms/d/e/1FAIpQLSdr1X2hlBSeSGKqY172ee275ZylfCE9LR13Dd7byQilUr6SDQ/viewform?usp=header",
+    "carrom": "https://docs.google.com/forms/d/e/1FAIpQLSdmFBy1oeXGtWKin_AiW4Z17LgVWO8I7vrcMBLqeNNRBXDk9g/viewform?usp=header",
+    "chess": "https://docs.google.com/forms/d/e/1FAIpQLScm5sM_HhslMPKg8t0_7kFw2y1zdSL58U5ESZBu8Fc4-xF4WA/viewform?usp=header",
+    "badminton (singles)": "https://docs.google.com/forms/d/e/1FAIpQLSf5C6ZQjUoLdSIQfqFmfA_nmmvfjUvaICL8lItFI5Gg8de3Vg/viewform?usp=header",
+    "badminton (doubles)": "https://docs.google.com/forms/d/e/1FAIpQLSe-Jq16NoEzf79ZrYfz0hmDkZ2b-K3i3ClDDCbqh1F0Y3HyRA/viewform?usp=header",
+    "badminton (mixed doubles)": "https://docs.google.com/forms/d/e/1FAIpQLSfseATayvN0a_3zzHexlMS1QWg-rbmmAmL_u4px_47_2oqnvA/viewform?usp=header",
+    "table tennis (singles)": "https://docs.google.com/forms/d/e/1FAIpQLSd-TJJJyEbQiRSzg-INKMYdEpqiuM9To8Eg8w0CYXLXgo1_1Q/viewform?usp=header",
+    "table tennis (doubles)": "https://docs.google.com/forms/d/e/1FAIpQLSdMFYb5eyQJZDHjBbtwJyZX8wJMM1XILvfjfak0u58Ah8WNjQ/viewform?usp=header",
+    "lawn tennis (singles)": "https://docs.google.com/forms/d/e/1FAIpQLSfUjRf0AvikPKkIGpZ_AM2InMLD3awVjbThnsif1h-ixlQXFg/viewform?usp=header",
+    "lawn tennis (doubles)": "https://docs.google.com/forms/d/e/1FAIpQLSdbzsoFCdUiJqaKqy9Q_1U6I5t_o8NxHhtIS_oL2zlZuVp9lA/viewform?usp=header",
+    "arm wrestling": "https://docs.google.com/forms/d/e/1FAIpQLSf2pHkkFwhBPrHliKJ7aEl1WwUcfYS8GfkQ-IsCv_-LwujMPg/viewform?usp=header",
+    "shotput": "https://docs.google.com/forms/d/e/1FAIpQLSdEhV2z7iS1ExBJLxfyPVMhNDdghKi-1PPmPRfGePqp__TM-w/viewform?usp=header",
+    "discus throw": "https://docs.google.com/forms/d/e/1FAIpQLSdwYZQ4x_NSTuKAMqnT2CQI85soXuHgChLCBxUs1u7quHtIYQ/viewform?usp=header",
+    "throw ball": "https://docs.google.com/forms/d/e/1FAIpQLSc1u9iLcksnifs0c9330cHx3uJyAWVR7D1Z61L-zDt82yB05w/viewform?usp=header",
+    "100m sprint": "https://docs.google.com/forms/d/e/1FAIpQLSf8x8nG-fpmHz_0ASYTUF3rSSXaClBnIvxcy8zmC9qX81Zylg/viewform?usp=header",
+    "200m sprint": "https://docs.google.com/forms/d/e/1FAIpQLSeK22AXIBCU__9wAhf-dBzA1fPj4l9n-2R3Ste7BxGQtWyIZw/viewform?usp=header",
+    "relay race": "https://docs.google.com/forms/d/e/1FAIpQLSdAijTrm7VJek6ItTEg3eSj08D9Wn5eEnrD8Q3DaKZxBsatCg/viewform?usp=publish-editor",
 
-  } else if (name.includes("syncopation") || name.includes("dance")) {
-    return "https://forms.gle/AJrHYPzFcf6GL5cv6";
+    "treasure hunt": "https://docs.google.com/forms/d/e/1FAIpQLSf-j-JbV_t0WdAv1joKTU2Dc52W8c3zco49ipeoMrnZWl3oJA/viewform?usp=header",
+    "escape room": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "paper fold": "https://docs.google.com/forms/d/e/1FAIpQLSesNaDRmH9fU_-rIGmGqj7N9yTSpp9YPj-Atu1VUw9GOOTzkw/viewform?usp=header",
 
-  } else if (name.includes("deep blue script") || name.includes("drama")) {
-    return "https://forms.gle/nAcq9yp5SvYhDSG37";
+    "tug of war": "https://docs.google.com/forms/d/e/1FAIpQLSf2tWdPMZBV9so7h2rvZDz-0bh5DwqVzZ_BKFXxX8elBoSoGQ/viewform?usp=header",
+    "bottle flip": "https://docs.google.com/forms/d/e/1FAIpQLSfCt08MIT0gGz_lJvuEslADw6EbsZNKOeihRVRJVZHUr6FytA/viewform?usp=header",
+    "ping pong": "https://docs.google.com/forms/d/e/1FAIpQLScJ3bGaASR_4VVOuqrwrTGYHAQQM-LG6-cHHknxwOjKciGwlg/viewform?usp=header",
+    "beg borrow steal": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "pictionary": "https://docs.google.com/forms/d/e/1FAIpQLSfh5tyBwbgrW0lSg7A73q4b1d7E1_79PMZJu0y9oyZOMKB5Ig/viewform?usp=header",
 
-  } else if (name.includes("geek cheek gala")) {
-    return "https://forms.gle/c7TTQdG1dcNHzjWz56";
+    "poster": "https://forms.gle/ftyXAyFr8YzZJhQT7",
+    "tote bag painting": "https://forms.gle/KbRCRSHS1NrE1Abs5",
+    "face painting": "https://docs.google.com/forms/d/e/1FAIpQLSdNA7VCt0mPlp2MnvKUYXvgGg36MoCTvn7kL6oAj0EyYAbAQA/viewform?usp=dialog",
+    "photography": "https://forms.gle/cZxA7yvCAzMSDuSK9",
+    "origami": "https://docs.google.com/forms/d/e/1FAIpQLSdiQ9cbeDnm9daJm6OGpZlpSoDItgJxNLh1nUW5oUI2z38r_Q/viewform?usp=header",
+    "stone painting": "https://docs.google.com/forms/d/e/1FAIpQLSesNaDRmH9fU_-rIGmGqj7N9yTSpp9YPj-Atu1VUw9GOOTzkw/viewform?usp=header",
+    "mix media": "https://docs.google.com/forms/d/e/1FAIpQLScBvHuRjzi1BL8QtG029hOz4xg0hZaoBprEKmfUPm9bTObTDg/viewform?usp=header",
 
-  } else if (name.includes("rhythmixia") || name.includes("instrumental")) {
-    return "https://forms.gle/eKJ8pbZCXzeTtGp69";
+    "bgmi": "https://forms.gle/zJUUHLdUbSHqb1TJA",
+    "codm multiplayer": "https://forms.gle/zJUUHLdUbSHqb1TJA",
+    "codm br": "https://forms.gle/zJUUHLdUbSHqb1TJA",
+    "efootball": "https://forms.gle/zJUUHLdUbSHqb1TJA",
+    "eafc": "https://forms.gle/zJUUHLdUbSHqb1TJA",
 
-  } else if (name.includes("crescendo") || name.includes("singing")) {
-    return "https://forms.gle/DucHozY98LCb6NQt9";
+    "ocean jam": "https://forms.gle/kDYia1Mz2QrNkvMY7",
+    "syncopation (dance) - team": "https://forms.gle/efVoKdSApVzmtY6V9",
+    "syncopation (dance) - solo": "https://forms.gle/bMoaawFpV4GSXFEL8",
+    "the deep blue script": "https://forms.gle/Hf9oYDrkHKgAWhqJA",
+    "geek cheek gala": "https://forms.gle/xhy8Fw95NsygMRAQ7",
+    "rhythmixia (instrumental - solo)": "https://forms.gle/bMoaawFpV4GSXFEL8",
+    "rhythmixia (instrumental - duet)": "https://forms.gle/M3B3kUb42kMkeVQp7",
+    "crescendo (singing - solo)": "https://forms.gle/bMoaawFpV4GSXFEL8",
+    "crescendo (singing - duet)": "https://forms.gle/M3B3kUb42kMkeVQp7",
+    "crescendo (singing - group)": "https://forms.gle/efVoKdSApVzmtY6V9",
 
-  } else if (name.includes("enchante") || name.includes("fashion")) {
-    return "https://docs.google.com/forms/d/e/1FAIpQLSduZgP4yNtQFUF-Oga138uom9rN1jaxEGrxHLb8525cUL_S-A/viewform";
-  } else {
-    return teamName && teamName !== "" ? "https://forms.gle/ANPRCwxepFRfotSS7" : "https://forms.gle/x67zXrT6xPnAcikz7"
+    // Literature & Cultural Block (all share same link)
+    "kotoba no umi": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "shinsekai stories": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "monogatari no yume": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "sakura verses": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "samurai stand-up": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "kamikaze clash": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "shogun's council": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "the exquizite": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "the otaku oracle": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "the hokage trials": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "hayakute curious": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "karaoke diagnosis": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "spelling bee": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+    "meme literature": "https://docs.google.com/forms/d/e/1FAIpQLSeZR4J52LUb0VSgm2OJ8Tvc4Xe_VGLn22dQ9LAxAyW4MBtT3A/viewform?usp=dialog",
+  };
+
+  for (const key in forms) {
+    if (name.includes(key)) { return forms[key]; }
   }
+
+  return teamName && teamName !== "" ? "https://forms.gle/ANPRCwxepFRfotSS7" : "https://forms.gle/x67zXrT6xPnAcikz7"
 }
+
+
 
 
 async function eventPaymentEmail(toEmail, participantName, eventName, teamName, amount) {

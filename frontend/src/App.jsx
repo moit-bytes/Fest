@@ -24,6 +24,7 @@ import Esports from './Pages/Events/Esports';
 import Login from './Pages/Login';
 import EventPaymentTable from './Components/EventPaymentTable';
 import Cultural from './Pages/Events/Cultural';
+import SpecialEvents from './Components/SpecialEvents';
 export default function App() {
   return (
     <RecoilRoot>
@@ -43,6 +44,7 @@ export default function App() {
                     <AboutEternia />
                     <AboutEterniaLogo />
                     <EventHighlights />
+                    <SpecialEvents />
                     <Cards />
                     <RegisterPage />
                   </>

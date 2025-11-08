@@ -27,7 +27,7 @@ const Navbar = () => {
           >
             BROCHURE
           </a>
-          <a className="navbar-anchor" onClick={() => scrollToOffsetFromBottomWhenStable(3100)} style={{ cursor: "pointer" }}>REGISTRATION</a>
+          <a className="navbar-anchor" onClick={() => scrollToOffsetFromBottomWhenStable(5100)} style={{ cursor: "pointer" }}>REGISTRATION</a>
         </nav>
 
         {/* Mobile Menu Button */}
