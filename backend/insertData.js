@@ -9,20 +9,24 @@ const data = [
     subcategories: [
       { name: "Football", isPaid: true, paymentAmount: 1800, gender: "male", team: true },
       { name: "Cricket", isPaid: true, paymentAmount: 1800, gender: "male", team: true },
-      { name: "Volleyball", isPaid: true, paymentAmount: 800, gender: "male", team: true },
-      { name: "Basketball", isPaid: true, paymentAmount: 800, gender: "male", team: true },
+      { name: "Volleyball", isPaid: true, paymentAmount: 800, gender: "both", team: true },
+      { name: "Basketball", isPaid: true, paymentAmount: 800, gender: "both", team: true },
       { name: "Kabaddi", isPaid: true, paymentAmount: 1000, gender: "male", team: true },
       { name: "Carrom", isPaid: true, paymentAmount: 150, gender: "both", team: false },
       { name: "Chess", isPaid: true, paymentAmount: 150, gender: "both", team: false },
-      { name: "Badminton", isPaid: true, paymentAmount: 200, gender: "both", team: false },
-      { name: "Table Tennis", isPaid: true, paymentAmount: 200, gender: "both", team: false },
-      { name: "Lawn Tennis", isPaid: true, paymentAmount: 500, gender: "male", team: false },
+      { name: "Badminton (Singles)", isPaid: true, paymentAmount: 200, gender: "both", team: false },
+      { name: "Badminton (Doubles)", isPaid: true, paymentAmount: 400, gender: "both", team: true },
+      { name: "Badminton (Mixed Doubles)", isPaid: true, paymentAmount: 400, gender: "both", team: true },
+      { name: "Table Tennis (Singles)", isPaid: true, paymentAmount: 200, gender: "both", team: false },
+      { name: "Table Tennis (Doubles)", isPaid: true, paymentAmount: 400, gender: "both", team: true },
+      { name: "Lawn Tennis", isPaid: true, paymentAmount: 500, gender: "both", team: false },
       { name: "Arm Wrestling", isPaid: true, paymentAmount: 100, gender: "male", team: false },
       { name: "Shotput", isPaid: true, paymentAmount: 100, gender: "both", team: false },
       { name: "Discus Throw", isPaid: true, paymentAmount: 100, gender: "both", team: false },
-      { name: "100m", isPaid: true, paymentAmount: 100, gender: "both", team: false },
-      { name: "200m", isPaid: true, paymentAmount: 100, gender: "both", team: false },
-      { name: "Relay", isPaid: true, paymentAmount: 400, gender: "both", team: true }
+      { name: "Throw Ball", isPaid: true, paymentAmount: 100, gender: "female", team: false },
+      { name: "100m Sprint", isPaid: true, paymentAmount: 100, gender: "both", team: false },
+      { name: "200m Sprint", isPaid: true, paymentAmount: 100, gender: "both", team: false },
+      { name: "Relay Race", isPaid: true, paymentAmount: 400, gender: "both", team: true }
     ]
   },
   {
@@ -77,6 +81,22 @@ const data = [
       { name: "CODM BR", isPaid: true, paymentAmount: 150, unit: "per team", team: true },
       { name: "eFootball", isPaid: true, paymentAmount: 50, unit: "per person", team: false },
       { name: "EAFC", isPaid: true, paymentAmount: 50, unit: "per person", team: false }
+    ]
+  },
+  {
+    categoryName: "Cultural",
+    subcategories: [
+      { name: "Ocean Jam (Battle of the Bands)", isPaid: true, paymentAmount: 400, unit: "per team", team: true },
+      { name: "Syncopation (Dance) - Team", isPaid: true, paymentAmount: 400, unit: "per team", team: true },
+      { name: "Syncopation (Dance) - Solo", isPaid: true, paymentAmount: 100, unit: "per person", team: false },
+      { name: "The Deep Blue Script (Drama)", isPaid: true, paymentAmount: 400, unit: "per team", team: true },
+      { name: "Geek Cheek Gala", isPaid: true, paymentAmount: 100, unit: "per person", team: false },
+      { name: "Rhythmixia (Instrumental - Solo)", isPaid: true, paymentAmount: 100, unit: "per person", team: false },
+      { name: "Rhythmixia (Instrumental - Duet)", isPaid: true, paymentAmount: 150, unit: "per team", team: true },
+      { name: "Crescendo (Singing - Solo)", isPaid: true, paymentAmount: 100, unit: "per person", team: false },
+      { name: "Crescendo (Singing - Duet)", isPaid: true, paymentAmount: 150, unit: "per team", team: true },
+      { name: "Crescendo (Singing - Group)", isPaid: true, paymentAmount: 400, unit: "per team", team: true },
+      // { name: "Enchante (Fashion)", isPaid: true, paymentAmount: 50, unit: "per person", team: false },
     ]
   }
 ];

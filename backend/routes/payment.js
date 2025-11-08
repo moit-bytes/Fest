@@ -42,7 +42,7 @@ const sportPaymentValidationSchema = z
     email: z.string().email("Invalid email format"),
     aadhaarCard: z.string().optional(),
     collegeId: z.string().optional(),
-    amount: z.number().positive("Amount must be positive"),
+    amount: z.number(),
   })
   .superRefine((data, ctx) => {
     // Either teamName or individualName must exist
@@ -78,15 +78,15 @@ const sportPaymentValidationSchema = z
           path: ["collegeId"],
         });
       }
-    } else {
-      if (!data.aadhaarCard) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "aadhaarCard is required when institutionName is not provided.",
-          path: ["aadhaarCard"],
-        });
-      }
     }
+    if (!data.aadhaarCard) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "aadhaarCard is required when institutionName is not provided.",
+        path: ["aadhaarCard"],
+      });
+    }
+
   });
 
 // const razorpay = new Razorpay({
@@ -187,7 +187,7 @@ router.post('/pay', async (req, res) => {
     if (err.name === "ZodError") {
       return res
         .status(400)
-        .json(new Response(400, err.errors.map(e => e.message).join(", "), false));
+        .json(new Response(400, err.errors?.map(e => e.message).join(", "), false));
     }
     console.error(err);
     return res
@@ -237,6 +237,18 @@ router.post("/sportspay", async (req, res) => {
     const amountINR = amount;
     const firstname = teamName || individualName;
     const teamNameConst = teamName || "";
+
+    if (!amountINR || amountINR === 0) {
+      eventPaymentEmail(email, firstname, subCategory, teamName, amount);
+      return res
+        .status(200)
+        .json(
+          new Response(200, "Success", false, {
+            "emailSent": true
+          })
+        );;
+    }
+
     // ✅ PayU hash generation
     const hashString = `${PAYU_MERCHANT_KEY}|${txnid}|${amountINR}|${productinfo}|${firstname}|${email}|${teamNameConst}|${subCategory || ""}|||||||||${PAYU_MERCHANT_SALT}`;
     const hash = crypto.createHash("sha512").update(hashString).digest("hex");
@@ -320,7 +332,7 @@ router.post("/sportspay", async (req, res) => {
         .json(
           new Response(
             400,
-            err.errors.map((e) => e.message).join(", "),
+            err.errors?.map((e) => e.message).join(", "),
             false
           )
         );

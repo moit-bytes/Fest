@@ -2,17 +2,17 @@ const mongoose = require('mongoose');
 
 
 const userSchema = new mongoose.Schema({
-name:{type:String, required:true},
-mail:{type:String, required:true},
-password:{
-  type:String, required:true
-}
+  name: { type: String, required: true },
+  mail: { type: String, required: true },
+  password: {
+    type: String, required: true
+  }
 });
 
 
 const paymentSchema = new mongoose.Schema({
-  name: { type: String, required: true },   
-  email: { type: String, required: true }, 
+  name: { type: String, required: true },
+  email: { type: String, required: true },
   contact: { type: String, required: true },
   amount: { type: Number, required: true },
   uniqueId: { type: String, unique: true },
@@ -23,10 +23,10 @@ const paymentSchema = new mongoose.Schema({
     default: "not_issued"
   },
 }, { timestamps: true });
-  // razorpayOrderId: { type: String, required: true },
-  // razorpayPaymentId: { type: String },
+// razorpayOrderId: { type: String, required: true },
+// razorpayPaymentId: { type: String },
 
-  const subCategorySchema = new mongoose.Schema({
+const subCategorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -41,7 +41,7 @@ const paymentSchema = new mongoose.Schema({
       return this.isPaid;
     },
   },
-    gender: {
+  gender: {
     type: String,
     enum: ["male", "female", "both"],
     required: function () {
@@ -51,11 +51,11 @@ const paymentSchema = new mongoose.Schema({
     },
   },
   unit: {
-  type: String,
-  enum: ["per team", "per person"],
-  required: false
-}, 
-team: {
+    type: String,
+    enum: ["per team", "per person"],
+    required: false
+  },
+  team: {
     type: Boolean,
     required: true, // must always specify whether it's a team or not
   },
@@ -118,27 +118,17 @@ const EventsPaymentSchema = new mongoose.Schema(
 
     aadhaarCard: {
       type: String,
-      required: function () {
-        return !this.institutionName; // Aadhaar required only if not institution-based
-      },
+      required: true,
       trim: true,
     },
-
-    collegeId: {
+    categoryName: {
       type: String,
-      required: function () {
-        return !!this.institutionName; // required only if institutionName exists
-      },
-      trim: true,
-    },
-    categoryName:{
-      type:String,
       required: true,
 
     },
-    subCategory:{
-      type:String,
-      required:true,
+    subCategory: {
+      type: String,
+      required: true,
     },
     amount: {
       type: Number,
@@ -167,11 +157,11 @@ const EventsPaymentSchema = new mongoose.Schema(
 const Payment = mongoose.model('Payment', paymentSchema);
 const User = mongoose.model('User', userSchema);
 const Category = mongoose.model('Category', categorySchema);
-const EventPayment = mongoose.model('EventPayment',EventsPaymentSchema);
-module.exports  ={
-        Payment,
-        User,
-        Category,
-        EventPayment
-    };
+const EventPayment = mongoose.model('EventPayment', EventsPaymentSchema);
+module.exports = {
+  Payment,
+  User,
+  Category,
+  EventPayment
+};
 

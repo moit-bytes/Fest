@@ -62,9 +62,14 @@ const SportsEvent = () => {
   // ✅ Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    let newVal = value;
+    if (name === "mobileNumber" || name === "aadhaarCard") {
+      newVal = value.replace(/\D/g, "");
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: newVal,
     }));
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: "" }));
@@ -102,14 +107,14 @@ const SportsEvent = () => {
       if (!formData.institutionName) {
         errors.institutionName = "Institution name is required";
       }
-      if (!formData.collegeId) {
-        errors.collegeId = "College ID is required";
-      }
-    } else {
-      if (!formData.aadhaarCard) {
-        errors.aadhaarCard = "Aadhaar Card is required";
-      }
     }
+    if (!formData.aadhaarCard) {
+      errors.aadhaarCard = "Aadhaar Card is required";
+    }
+    else if (formData.aadhaarCard.length !== 12) {
+      errors.aadhaarCard = "Aadhaar Card Number must be 12 digits";
+    }
+
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -134,7 +139,7 @@ const SportsEvent = () => {
         subCategory: formData.subCategory,
         mobileNumber: formData.mobileNumber,
         email: formData.email,
-        amount: selectedFee,
+        amount: selectedFee === "" ? 0 : selectedFee,
       };
 
       if (formData.teamName) paymentData.teamName = formData.teamName;
@@ -151,7 +156,12 @@ const SportsEvent = () => {
         paymentData
       );
 
-      const { payuUrl, payuData } = data.data;
+      const { payuUrl, payuData, emailSent } = data.data;
+
+      if (emailSent) {
+        window.location.href = `${window.location.origin}?success=true`;
+        return;
+      }
 
       const form = document.createElement("form");
       form.method = "POST";
@@ -215,7 +225,7 @@ const SportsEvent = () => {
                 <option value="">Select Subcategory</option>
                 {subcategories.map((sub) => (
                   <option key={sub._id} value={sub.name}>
-                    {sub.name} - ₹{sub.paymentAmount}
+                    {sub.name} - {sub.paymentAmount ? `₹ ${sub.paymentAmount}` : "Free 🎁"}
                   </option>
                 ))}
               </select>
@@ -411,56 +421,30 @@ const SportsEvent = () => {
               </div>
             )}
 
-            {/* College ID */}
-            {hasInstitution && (
-              <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">
-                  College ID *
-                </label>
-                <input
-                  type="text"
-                  name="collegeId"
-                  value={formData.collegeId}
-                  onChange={handleInputChange}
-                  placeholder="Enter your college ID"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.collegeId
-                    ? "border-red-500"
-                    : "border-gray-600"
-                    }`}
-                />
-                {validationErrors.collegeId && (
-                  <p className="text-red-400 text-xs mt-1">
-                    {validationErrors.collegeId}
-                  </p>
-                )}
-              </div>
-            )}
-
             {/* Aadhaar */}
-            {!hasInstitution && (
-              <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">
-                  Aadhaar Card Number *
-                </label>
-                <input
-                  type="text"
-                  name="aadhaarCard"
-                  value={formData.aadhaarCard}
-                  onChange={handleInputChange}
-                  placeholder="Enter 12-digit Aadhaar number"
-                  maxLength="12"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.aadhaarCard
-                    ? "border-red-500"
-                    : "border-gray-600"
-                    }`}
-                />
-                {validationErrors.aadhaarCard && (
-                  <p className="text-red-400 text-xs mt-1">
-                    {validationErrors.aadhaarCard}
-                  </p>
-                )}
-              </div>
-            )}
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                Aadhaar Card Number *
+              </label>
+              <input
+                type="text"
+                name="aadhaarCard"
+                value={formData.aadhaarCard}
+                onChange={handleInputChange}
+                placeholder="Enter 12-digit Aadhaar number"
+                maxLength="12"
+                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.aadhaarCard
+                  ? "border-red-500"
+                  : "border-gray-600"
+                  }`}
+              />
+              {validationErrors.aadhaarCard && (
+                <p className="text-red-400 text-xs mt-1">
+                  {validationErrors.aadhaarCard}
+                </p>
+              )}
+            </div>
+
 
             {paymentFailed && errorMessage && (
               <div className="text-center text-red-400 bg-red-900/20 border border-red-500/50 rounded-lg p-3">
@@ -527,7 +511,7 @@ const SportsEvent = () => {
             </div>
 
             <p className="text-green-400 text-lg font-semibold mb-6 text-center">
-              Registration Fee: ₹{selectedFee}
+              Registration Fee: {selectedFee ? `₹ ${selectedFee}` : "Free 🎁"}
             </p>
 
             <div className="flex justify-center gap-4">

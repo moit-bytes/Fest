@@ -62,9 +62,14 @@ const Informal = () => {
   // ✅ Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    let newVal = value;
+    if (name === "mobileNumber" || name === "aadhaarCard") {
+      newVal = value.replace(/\D/g, "");
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: newVal,
     }));
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: "" }));
@@ -102,14 +107,14 @@ const Informal = () => {
       if (!formData.institutionName) {
         errors.institutionName = "Institution name is required";
       }
-      if (!formData.collegeId) {
-        errors.collegeId = "College ID is required";
-      }
-    } else {
-      if (!formData.aadhaarCard) {
-        errors.aadhaarCard = "Aadhaar Card is required";
-      }
     }
+    if (!formData.aadhaarCard) {
+      errors.aadhaarCard = "Aadhaar Card is required";
+    }
+    else if (formData.aadhaarCard.length !== 12) {
+      errors.aadhaarCard = "Aadhaar Card Number must be 12 digits";
+    }
+
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -134,7 +139,7 @@ const Informal = () => {
         subCategory: formData.subCategory,
         mobileNumber: formData.mobileNumber,
         email: formData.email,
-        amount: selectedFee,
+        amount: selectedFee === "" ? 0 : selectedFee,
       };
 
       if (formData.teamName) paymentData.teamName = formData.teamName;
@@ -151,7 +156,12 @@ const Informal = () => {
         paymentData
       );
 
-      const { payuUrl, payuData } = data.data;
+      const { payuUrl, payuData, emailSent } = data.data;
+
+      if (emailSent) {
+        window.location.href = `${window.location.origin}?success=true`;
+        return;
+      }
 
       const form = document.createElement("form");
       form.method = "POST";
@@ -207,16 +217,15 @@ const Informal = () => {
                 name="subCategory"
                 value={formData.subCategory}
                 onChange={handleSubcategoryChange}
-                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                  validationErrors.subCategory
-                    ? "border-red-500"
-                    : "border-gray-600"
-                }`}
+                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.subCategory
+                  ? "border-red-500"
+                  : "border-gray-600"
+                  }`}
               >
                 <option value="">Select Subcategory</option>
                 {subcategories.map((sub) => (
                   <option key={sub._id} value={sub.name}>
-                    {sub.name} - ₹{sub.paymentAmount}
+                    {sub.name} - {sub.paymentAmount ? `₹ ${sub.paymentAmount}` : "Free 🎁"}
                   </option>
                 ))}
               </select>
@@ -238,7 +247,7 @@ const Informal = () => {
             {/* Fee */}
             {selectedFee && (
               <div className="text-center text-xl text-green-400 font-semibold py-2">
-                💰 Registration Fee: ₹{selectedFee}
+                💰 Registration Fee: {selectedFee ? `₹ ${selectedFee}` : "Free 🎁"}
               </div>
             )}
 
@@ -255,11 +264,10 @@ const Informal = () => {
                     value={formData.teamName}
                     onChange={handleInputChange}
                     placeholder="Enter your team name"
-                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                      validationErrors.teamName
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
+                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.teamName
+                      ? "border-red-500"
+                      : "border-gray-600"
+                      }`}
                   />
                   {validationErrors.teamName && (
                     <p className="text-red-400 text-xs mt-1">
@@ -278,11 +286,10 @@ const Informal = () => {
                     value={formData.leaderName}
                     onChange={handleInputChange}
                     placeholder="Enter leader name"
-                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                      validationErrors.leaderName
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
+                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.leaderName
+                      ? "border-red-500"
+                      : "border-gray-600"
+                      }`}
                   />
                   {validationErrors.leaderName && (
                     <p className="text-red-400 text-xs mt-1">
@@ -305,11 +312,10 @@ const Informal = () => {
                   value={formData.individualName}
                   onChange={handleInputChange}
                   placeholder="Enter your name"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                    validationErrors.individualName
-                      ? "border-red-500"
-                      : "border-gray-600"
-                  }`}
+                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.individualName
+                    ? "border-red-500"
+                    : "border-gray-600"
+                    }`}
                 />
                 {validationErrors.individualName && (
                   <p className="text-red-400 text-xs mt-1">
@@ -331,11 +337,10 @@ const Informal = () => {
                 onChange={handleInputChange}
                 placeholder="10-digit mobile number"
                 maxLength="10"
-                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                  validationErrors.mobileNumber
-                    ? "border-red-500"
-                    : "border-gray-600"
-                }`}
+                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.mobileNumber
+                  ? "border-red-500"
+                  : "border-gray-600"
+                  }`}
               />
               {validationErrors.mobileNumber && (
                 <p className="text-red-400 text-xs mt-1">
@@ -355,9 +360,8 @@ const Informal = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email"
-                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                  validationErrors.email ? "border-red-500" : "border-gray-600"
-                }`}
+                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.email ? "border-red-500" : "border-gray-600"
+                  }`}
               />
               {validationErrors.email && (
                 <p className="text-red-400 text-xs mt-1">
@@ -404,11 +408,10 @@ const Informal = () => {
                   value={formData.institutionName}
                   onChange={handleInputChange}
                   placeholder="Enter institution name"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                    validationErrors.institutionName
-                      ? "border-red-500"
-                      : "border-gray-600"
-                  }`}
+                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.institutionName
+                    ? "border-red-500"
+                    : "border-gray-600"
+                    }`}
                 />
                 {validationErrors.institutionName && (
                   <p className="text-red-400 text-xs mt-1">
@@ -418,58 +421,31 @@ const Informal = () => {
               </div>
             )}
 
-            {/* College ID */}
-            {hasInstitution && (
-              <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">
-                  College ID *
-                </label>
-                <input
-                  type="text"
-                  name="collegeId"
-                  value={formData.collegeId}
-                  onChange={handleInputChange}
-                  placeholder="Enter your college ID"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                    validationErrors.collegeId
-                      ? "border-red-500"
-                      : "border-gray-600"
-                  }`}
-                />
-                {validationErrors.collegeId && (
-                  <p className="text-red-400 text-xs mt-1">
-                    {validationErrors.collegeId}
-                  </p>
-                )}
-              </div>
-            )}
-
             {/* Aadhaar */}
-            {!hasInstitution && (
-              <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">
-                  Aadhaar Card Number *
-                </label>
-                <input
-                  type="text"
-                  name="aadhaarCard"
-                  value={formData.aadhaarCard}
-                  onChange={handleInputChange}
-                  placeholder="Enter 12-digit Aadhaar number"
-                  maxLength="12"
-                  className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${
-                    validationErrors.aadhaarCard
-                      ? "border-red-500"
-                      : "border-gray-600"
+
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                Aadhaar Card Number *
+              </label>
+              <input
+                type="text"
+                name="aadhaarCard"
+                value={formData.aadhaarCard}
+                onChange={handleInputChange}
+                placeholder="Enter 12-digit Aadhaar number"
+                maxLength="12"
+                className={`w-full px-4 py-3 bg-gray-700/60 border rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:outline-none ${validationErrors.aadhaarCard
+                  ? "border-red-500"
+                  : "border-gray-600"
                   }`}
-                />
-                {validationErrors.aadhaarCard && (
-                  <p className="text-red-400 text-xs mt-1">
-                    {validationErrors.aadhaarCard}
-                  </p>
-                )}
-              </div>
-            )}
+              />
+              {validationErrors.aadhaarCard && (
+                <p className="text-red-400 text-xs mt-1">
+                  {validationErrors.aadhaarCard}
+                </p>
+              )}
+            </div>
+
 
             {paymentFailed && errorMessage && (
               <div className="text-center text-red-400 bg-red-900/20 border border-red-500/50 rounded-lg p-3">
@@ -501,7 +477,7 @@ const Informal = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 px-4">
           <div className="bg-gray-800 p-6 rounded-2xl w-full max-w-md border border-gray-700 shadow-xl">
             <h2 className="text-xl font-bold text-white mb-4 text-center">Confirm Registration</h2>
-            
+
             <div className="space-y-2 text-sm mb-6">
               <div className="flex justify-between">
                 <span className="text-gray-400">Category:</span>
@@ -534,11 +510,11 @@ const Informal = () => {
                 <span className="text-white font-semibold">{formData.email}</span>
               </div>
             </div>
-            
+
             <p className="text-green-400 text-lg font-semibold mb-6 text-center">
-              Registration Fee: ₹{selectedFee}
+              Registration Fee: {selectedFee ? `₹ ${selectedFee}` : "Free 🎁"}
             </p>
-            
+
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => setShowConfirmModal(false)}
