@@ -25,8 +25,10 @@ export default function SpecialEvents() {
                             className="w-64 md:w-80 lg:w-96 object-contain"
                             initial={{ opacity: 0, x: -180 }}
                             whileInView={{ opacity: 1, x: 0 }}
+                            style={{ cursor: "pointer" }}
                             transition={{ duration: 0.9, ease: "easeOut" }}
                             viewport={{ amount: 0.3 }}
+                            onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLSduZgP4yNtQFUF-Oga138uom9rN1jaxEGrxHLb8525cUL_S-A/viewform?usp=dialog", "_blank")}
                         />
 
                         {/* Right Image */}
@@ -36,8 +38,10 @@ export default function SpecialEvents() {
                             className="w-64 md:w-80 lg:w-96 object-contain"
                             initial={{ opacity: 0, x: 180 }}
                             whileInView={{ opacity: 1, x: 0 }}
+                            style={{ cursor: "pointer" }}
                             transition={{ duration: 0.9, ease: "easeOut" }}
                             viewport={{ amount: 0.3 }}
+                        // onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLSduZgP4yNtQFUF-Oga138uom9rN1jaxEGrxHLb8525cUL_S-A/viewform?usp=dialog", "_blank")}
                         />
                     </div>
                 ))}
